@@ -54,7 +54,7 @@ def generate_launch_description():
                 output='screen',
                 name=[LaunchConfig('camera_name')],
                 parameters=[camera_params,
-                            {'parameter_file': config_dir + 'chameleon.cfg',
+                            {'parameter_file': config_dir + 'chameleon_rst.cfg',
                              'serial_number': [LaunchConfig('serial')],
                             }],
                 remappings=[('~/control', '/exposure_control/control'),],
