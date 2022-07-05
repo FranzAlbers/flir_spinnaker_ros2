@@ -6,7 +6,7 @@ from ament_index_python.packages import get_package_share_directory
 
 camera_params = {
     'serial_number': '18497287',
-    'frame_id': 'camera_rear',
+    'frame_id': 'camera_rear/camera_optical_link',
     'debug': False,
     'compute_brightness': False,
     'dump_node_map': False,
