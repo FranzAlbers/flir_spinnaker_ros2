@@ -99,24 +99,6 @@ def generate_launch_description():
                     remappings=[('image', 'image_raw'),],
                     extra_arguments=[{'use_intra_process_comms': True}],
                 ),
-                ComposableNode(
-                    package='image_proc',
-                    plugin='image_proc::RectifyNode',
-                    name='rectify_rear_cam_node',
-                    namespace='/sensing/camera/camera_rear',
-                    remappings=[('image', 'image_raw'),],
-                    extra_arguments=[{'use_intra_process_comms': True}],
-                ),
-                ComposableNode(
-                    package='image_flip',
-                    plugin='image_flip::ImageFlipNode',
-                    name='rotate_rear_cam_node',
-                    namespace='/sensing/camera/camera_rear',
-                    parameters=[{'rotation_steps': 2},
-                                {'use_camera_info': False}],
-                    remappings=[('image', 'image_rect'),],
-                    #extra_arguments=[{'use_intra_process_comms': True}],
-                ),
                 # ComposableNode(
                 #     package='cam_sync_ros2',
                 #     plugin='cam_sync_ros2::CamSync',
@@ -142,8 +124,39 @@ def generate_launch_description():
             ],
             output='screen',
     )
+
+    # Workaround for keeping rate up and delay low. Should also contain the camera_rear driver node, but this is not possible for now
+    # https://github.com/berndpfrommer/flir_spinnaker_ros2/issues/24
+    container_rear_cam_proc = ComposableNodeContainer(
+        name='camera_rear_proc_container',
+        namespace='camera',
+        package='rclcpp_components',
+        executable='component_container',
+        composable_node_descriptions=[
+            ComposableNode(
+                package='image_proc',
+                plugin='image_proc::RectifyNode',
+                name='rectify_rear_cam_node',
+                namespace='/sensing/camera/camera_rear',
+                remappings=[('image', 'image_raw'),],
+                extra_arguments=[{'use_intra_process_comms': True}],
+            ),
+            ComposableNode(
+                package='image_flip',
+                plugin='image_flip::ImageFlipNode',
+                name='rotate_rear_cam_node',
+                namespace='/sensing/camera/camera_rear',
+                parameters=[{'rotation_steps': 2},
+                            {'use_camera_info': False}],
+                remappings=[('image', 'image_rect'),],
+                #extra_arguments=[{'use_intra_process_comms': True}],
+            ),
+        ],
+        output='screen',
+    )
+
     name_0_arg = LaunchArg('camera_front', default_value=['camera_front'],
                            description='name of camera 0')
     name_1_arg = LaunchArg('camera_rear', default_value=['camera_rear'],
                            description='name of camera 1')
-    return launch.LaunchDescription([name_0_arg, name_1_arg, container])
+    return launch.LaunchDescription([name_0_arg, name_1_arg, container, container_rear_cam_proc])
