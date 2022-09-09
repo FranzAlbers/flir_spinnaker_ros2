@@ -5,21 +5,20 @@ from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
 
 camera_params = {
-    'serial_number': '18497292',
     'frame_id': 'camera_front/camera_optical_link',
     'debug': False,
     'compute_brightness': False,
     'dump_node_map': False,
     # set parameters defined in chameleon.cfg    
     #'video_mode': 1,
-    #'offset_x': 0,
-    #'offset_y': 384,
-    #'image_width': 2048,
-    #'image_height': 1152,
-    'offset_x': 0,
-    'offset_y': 0,
     'image_width': 2048,
-    'image_height': 1536,
+    'image_height': 1152,
+    'offset_x': 0,
+    'offset_y': 384,
+    #'image_width': 2048,
+    #'image_height': 1536,
+    #'offset_x': 0,
+    #'offset_y': 0,
     'pixel_format': 'RGB8', # 'BayerRG8, 'RGB8' or 'Mono8'
     #'pixel_coding': 'RGBPacked',
     'gain_auto': 'Continuous',
@@ -27,7 +26,7 @@ camera_params = {
     'frame_rate_auto': 'Off', # 'Off' or 'Continuous'
     'frame_rate_enable': True,
     #'frame_rate_continous': True,
-    'frame_rate': 10.0,
+    'frame_rate': 20.0,
     'trigger_mode': 'Off',
     'chunk_mode_active': True,
     'chunk_selector_frame_id': 'FrameID',
@@ -53,10 +52,11 @@ def generate_launch_description():
                 executable='camera_driver_node',
                 output='screen',
                 name=[LaunchConfig('camera_name')],
+                namespace='/sensing/camera',
                 parameters=[camera_params,
                             {'parameter_file': config_dir + 'chameleon_rst.cfg',
                              'serial_number': [LaunchConfig('serial')],
                             }],
-                remappings=[('~/control', '/exposure_control/control'),],
+                #remappings=[('~/control', '/exposure_control/control'),],
     )
     return LaunchDescription([name_arg, serial_arg, node])
